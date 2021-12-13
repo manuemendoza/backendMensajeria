@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 
 const database = require('./services/mongoose');
+const userRouter = require('./modules/users/router');
 
 database();
 
@@ -15,5 +16,9 @@ app.use(function(req, res, next) {
 });
 
 app.use(express.json());
+app.use('/users', userRouter);
+
+// a little easter egg :P
+app.get('/coffee', (req, res) => res.send('So sorry', 418));
 
 app.listen(process.env.PORT, () => console.log('Servidor levantado en', process.env.PORT));
