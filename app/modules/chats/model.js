@@ -6,11 +6,11 @@ const ChatsSchema = mongoose.Schema({
         require:true
     },
     adminId:{
-        type:Number,
+        type:mongoose.Schema.Types.ObjectId,
         require:true
     },
     userIds:[{
-        type:Number,
+        type:mongoose.Schema.Types.ObjectId,
         require:true
     }]
 });

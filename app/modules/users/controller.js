@@ -1,5 +1,5 @@
 const User = require('./model');
-const brcrypt = require('bcryptjs');
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 const createUser = async(req, res) => {
@@ -8,8 +8,8 @@ const createUser = async(req, res) => {
     } else {
         let data = req.body;
         const user = new User(data);
-        const salt = brcrypt.genSaltSync(9);
-        const hash = brcrypt.hashSync(data.password, salt);
+        const salt = bcrypt.genSaltSync(9);
+        const hash = bcrypt.hashSync(data.password, salt);
         user.password = hash ;
         try {
             await user.save();
@@ -134,6 +134,7 @@ module.exports = {
     createUser,
     getUsers,
     getUser,
+    loginUser,
     updateUser,
     deleteUser
 };

@@ -49,7 +49,7 @@ const updateChat = async(req, res) => {
         const chat = await Chat.findById(req.params.id);
         if (chat) {
             let data = req.body;
-            const chatUpdate = await User.findByIdAndUpdate(req.params.id, data, { new: true });
+            const chatUpdate = await Chat.findByIdAndUpdate(req.params.id, data, { new: true });
             res.status(200).json(chatUpdate);
         } else {
             res.status(404).json({message: 'chat not found'});
