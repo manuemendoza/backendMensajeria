@@ -8,9 +8,9 @@ const createChats = async(req, res) => {
         res.status(200).json(chat)
     } catch (error) {
         if (error.message == 'ValidationError') {
-            res.status(400).json({message: error.message})
+            res.status(400).json({ message: error.message })
         } else {
-            res.status(500).json({message: error.message});
+            res.status(500).json({ message: error.message });
         }
     }
 };
@@ -20,13 +20,14 @@ const getChats = async(req, res) => {
     try {
         if (req.query.title) {
             const title = await Chat.find({ title: { $regex: new RegExp(req.query.title, 'i') } });
-            res.status(200).json({title: title});
+            res.status(200).json({ title: title });
         } else {
-            res.status(200).json( await Chat.find());
+            const titles = await Chat.find();
+            res.status(200).json(titles);
         }
     } catch (error) {
         console.error(error);
-        res.status(500).json({message:error.message});
+        res.status(500).json({ message: error.message });
     }
 };
 
@@ -36,11 +37,11 @@ const getChat = async(req, res) => {
         if (chat) {
             res.status(200).json(chat);
         } else {
-            res.status(404).json({message: 'chat not found'});
+            res.status(404).json({ message: 'chat not found' });
         }
     } catch (error) {
         console.error(error);
-        res.status(500).json({message: error.message});
+        res.status(500).json({ message: error.message });
     }
 };
 
@@ -52,14 +53,14 @@ const updateChat = async(req, res) => {
             const chatUpdate = await Chat.findByIdAndUpdate(req.params.id, data, { new: true });
             res.status(200).json(chatUpdate);
         } else {
-            res.status(404).json({message: 'chat not found'});
+            res.status(404).json({ message: 'chat not found' });
         }
     } catch (error) {
         console.error(error);
         if (error.name == "ValidationError") {
-            res.status(400).json({menssage: error.message});
+            res.status(400).json({ menssage: error.message });
         } else {
-            res.status(500).json({message: error.message});
+            res.status(500).json({ message: error.message });
         }
     }
 };
@@ -69,13 +70,13 @@ const deleteChat = async(req, res) => {
         const chat = await Chat.findById(req.params.id);
         if (chat) {
             const chatDelete = await Chat.findByIdAndDelete(req.params.id);
-            res.status(200).json({message: 'chat deleted'});
+            res.status(200).json({ message: 'chat deleted' });
         } else {
-            res.status(404).json({message: 'chat not found'});
+            res.status(404).json({ message: 'chat not found' });
         }
     } catch (error) {
         console.error(error);
-        res.status(500).json({message: error.message});
+        res.status(500).json({ message: error.message });
     }
 };
 
