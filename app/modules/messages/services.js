@@ -1,7 +1,8 @@
-const Message = require('./model');
-const brcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-
+const controller = require('./controller');
+/**
+ * esta mierda hay que verla y refactorizalra estoy haciendo lo mismo en user
+ * 
+ */
 const createMessage = async(req, res) => {
         let data = req.body;
         const message = new Message(data);
@@ -18,32 +19,14 @@ const createMessage = async(req, res) => {
 };
 
 //Este codigo se ha dejado preparado por si en un futuro se implementa el role de admin
-const getMessages = async(data) => {
-    try {
-        if (data) {
-            const message = await Message.find({ message: { $regex: new RegExp(data, 'i') } });
-            return {message: message};
-        } else {
-            return await Message.find();
-        }
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({message: error.message});
-    }
+const getMessages = async(req, res) => {ç
+    const data = await controller.getMessages(req.query.message);
+    res.json(data)
 };
 
-const getMessage = async(data) => {
-    try {
-        const message = await Message.findById(data);
-        if (Message) {
-            res.status(200).json(message);
-        } else {
-            res.status(404).json({message: 'message not found'});
-        }
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({message: error.message});
-    }
+const getMessage = async(req, res) => {
+    const data = await controller.getMessage(req.param.id);
+    res.json(data);
 };
 
 const updateMessage = async(req, res) => {

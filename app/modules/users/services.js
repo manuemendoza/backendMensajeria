@@ -1,6 +1,7 @@
 const User = require('./model');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const controller = require('./controller');
 
 const createUser = async(req, res) => {
     if (!req.body.password) {
@@ -24,23 +25,23 @@ const createUser = async(req, res) => {
     }
 };
 
-//Este codigo se ha dejado preparado por si en un futuro se implementa el role de admin
-const getUsers = async(data) => {
-    try {
-        if (data) {
-            const users = await User.find({ name: { $regex: new RegExp(data, 'i') } });
-            return {user: users};
-        } else {
-            return await User.find();
-        }
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({message:error.message});
-    }
+const getUsers = async(req, res) => {
+    const data = await controller.getUsers(req.query.name)
+    res.status(200).json(data);
 };
 
-const getUser = async(data) => {
-    return await User.findById(data);
+const getUser = async(req, res) => {
+    const data = await controller.getUsers(req.params.id);
+    try {
+    if (data) {
+        res.status(200).json(data);
+    } else {
+        res.status(404).json({message: 'user not found'});
+    }
+} catch (error) {
+        console.error(error);
+        res.status(500).json({message: error.message});
+    }
 };
 
 const loginUser = async(req, res) => {
@@ -78,16 +79,24 @@ const loginUser = async(req, res) => {
     }
 };
 
-const updateUser = async(userId, data) => {
-        const user = await User.findById(userId);
+const updateUser = async(req, res) => {
+    const userId = req.params.id ;
+    const data = req.body;
+    try {
+        const user = await controller.updateUser(userId, data);
         if (user) {
-            if (data.password) {
-                const salt = bcrypt.genSaltSync(15);
-                const hash = bcrypt.hashSync(req.body.password, salt);
-                data.password = hash;
-            };
-            return await User.findByIdAndUpdate(userId, data, { new: true });
+            res.status(200).json(user);
+        } else {
+            res.status(404).json({message: 'user not found'});
         }
+    } catch (error) {
+        console.error(error);
+        if (error.name == "ValidationError") {
+            res.status(400).json({menssage: error.message});
+        } else {
+            res.status(500).json({message: error.message});
+        }
+    }
 };
 
 const deleteUser = async(req, res) => {

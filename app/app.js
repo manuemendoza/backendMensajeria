@@ -6,7 +6,8 @@ const userRouter = require('./modules/users/router');
 const chatRouter = require('./modules/chats/router');
 const messageRouter = require('./modules/messages/router');
 
-database();
+database().then(() => console.log('Conectado a la base de datos.' ))
+.catch(e => console.log('ERROR: No conectado a la base de datos.', e));;
 
 const app = express();
 
