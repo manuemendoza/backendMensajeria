@@ -1,5 +1,5 @@
 const User = require('./model');
-const brcrypt = require('bcryptjs');
+const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 
 const createUser = async(req, res) => {
@@ -8,15 +8,16 @@ const createUser = async(req, res) => {
     } else {
         let data = req.body;
         const user = new User(data);
-        const salt = brcrypt.genSaltSync(9);
-        const hash = brcrypt.hashSync(data.password, salt);
+        const salt = bcrypt.genSaltSync(9);
+        const hash = bcrypt.hashSync(data.password, salt);
         user.password = hash ;
         try {
             await user.save();
             res.status(200).json(user);
         } catch (error) {
-            if (error.message == 'ValidationError') {
-                res.status(400).json({message: error.message})
+            console.error(error);
+            if (error._message == 'User validation failed' || error.code == 11000) {
+                res.status(400).json({message: error.message, code: error.code})
             } else {
                 res.status(500).json({message: error.message});
             }
@@ -107,7 +108,7 @@ const updateUser = async(req, res) => {
         }
     } catch (error) {
         console.error(error);
-        if (error.name == "ValidationError") {
+        if (error._message == 'User validation failed' || error.code == 11000) {
             res.status(400).json({menssage: error.message});
         } else {
             res.status(500).json({message: error.message});
@@ -134,6 +135,7 @@ module.exports = {
     createUser,
     getUsers,
     getUser,
+    loginUser,
     updateUser,
     deleteUser
 };
