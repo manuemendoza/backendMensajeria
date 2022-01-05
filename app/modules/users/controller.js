@@ -15,8 +15,9 @@ const createUser = async(req, res) => {
             await user.save();
             res.status(200).json(user);
         } catch (error) {
-            if (error.message == 'ValidationError') {
-                res.status(400).json({message: error.message})
+            console.error(error);
+            if (error._message == 'User validation failed' || error.code == 11000) {
+                res.status(400).json({message: error.message, code: error.code})
             } else {
                 res.status(500).json({message: error.message});
             }
@@ -107,7 +108,7 @@ const updateUser = async(req, res) => {
         }
     } catch (error) {
         console.error(error);
-        if (error.name == "ValidationError") {
+        if (error._message == 'User validation failed' || error.code == 11000) {
             res.status(400).json({menssage: error.message});
         } else {
             res.status(500).json({message: error.message});
