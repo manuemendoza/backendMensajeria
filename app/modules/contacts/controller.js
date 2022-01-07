@@ -47,21 +47,22 @@ const getContact = async(req, res) => {
 };
 const updateContact = async(req, res) => {
     let data = req.body;
-    let dataArray = data['userIds']
+    let dataArray = data['userIds'];
     try {
-        const contact = await Contact.findById(req.params.id);
-        let newData =[];
-        for (let i = 0; i < contact.userIds.length; i++) {
-            const dbData = mongoose.Types.ObjectId(contact.userIds[i]).toString();
-            for (let d = 0; d < dataArray.length; d++) {
-                const clientData = dataArray[d];
-                if (dbData !== clientData) {
-                    newData.push(mongoose.Types.ObjectId(`${clientData}`));
-                }         
-            }
-        }
-        let dataId = contact.userIds.concat(newData);        
+        const contact = await Contact.findById(req.params.id);          
         if (contact) {
+            if (dataArray != undefined || dataArray !== null ) {
+                for (let i = 0; i < contact.userIds.length; i++) {
+                    const dbData = mongoose.Types.ObjectId(contact.userIds[i]).toString();
+                    for (let d = 0; d < dataArray.length; d++) {
+                        const clientData = dataArray[d];
+                        if (dbData == clientData) {
+                            dataArray.splice(d, 1);
+                        }
+                    }
+                }
+            }
+            let dataId = contact.userIds.concat(dataArray);  
             const updateContact = await Contact.findByIdAndUpdate(req.params.id,{userIds: dataId}, { new: true });
             res.status(200).json(updateContact);
         } else {
@@ -77,41 +78,41 @@ const updateContact = async(req, res) => {
     }
 };
 
-const deleteContact = async (req, res) => {
-    let data = req.body;
-    let dataArray = data['userIds']
-    try {
-        const contact = await Contact.findById(req.params.id);
-        let newData =[];
-        for (let i = 0; i < contact.userIds.length; i++) {
-            const element = array[i];
+// const deleteContact = async (req, res) => {
+//     let data = req.body;
+//     let dataArray = data['userIds']
+//     try {
+//         const contact = await Contact.findById(req.params.id);
+//         let newData =[];
+//         for (let i = 0; i < contact.userIds.length; i++) {
+//             const element = array[i];
             
-        }
-        // for (let i = 0; i < contact.userIds.length; i++) {
-        //     const dbData = mongoose.Types.ObjectId(contact.userIds[i]).toString();
-        //     for (let d = 0; d < dataArray.length; d++) {
-        //         const clientData = dataArray[d];
-        //         if (dbData !== clientData) {
-        //             newData.push(mongoose.Types.ObjectId(`${clientData}`));
-        //         }         
-        //     }
-        // }
-        // let dataId = contact.userIds.concat(newData);        
-        // if (contact) {
-        //     const updateContact = await Contact.findByIdAndUpdate(req.params.id,{userIds: dataId}, { new: true });
-        //     res.status(200).json(updateContact);
-        // } else {
-        //     res.status(404).json({ message: 'Contact list not found' });
-        // }
-    } catch (error) {
-        console.error(error);
-        if (error.name == "ValidationError") {
-            res.status(400).json({ menssage: error.message });
-        } else {
-            res.status(500).json({ message: error.message });
-        }
-    }
-};
+//         }
+//         // for (let i = 0; i < contact.userIds.length; i++) {
+//         //     const dbData = mongoose.Types.ObjectId(contact.userIds[i]).toString();
+//         //     for (let d = 0; d < dataArray.length; d++) {
+//         //         const clientData = dataArray[d];
+//         //         if (dbData !== clientData) {
+//         //             newData.push(mongoose.Types.ObjectId(`${clientData}`));
+//         //         }         
+//         //     }
+//         // }
+//         // let dataId = contact.userIds.concat(newData);        
+//         // if (contact) {
+//         //     const updateContact = await Contact.findByIdAndUpdate(req.params.id,{userIds: dataId}, { new: true });
+//         //     res.status(200).json(updateContact);
+//         // } else {
+//         //     res.status(404).json({ message: 'Contact list not found' });
+//         // }
+//     } catch (error) {
+//         console.error(error);
+//         if (error.name == "ValidationError") {
+//             res.status(400).json({ menssage: error.message });
+//         } else {
+//             res.status(500).json({ message: error.message });
+//         }
+//     }
+// };
 
 const deleteContacts = async (req, res) => {
     try {
@@ -133,6 +134,6 @@ module.exports = {
     getContacts,
     getContact,
     updateContact,
-    deleteContact,
+    // deleteContact,
     deleteContacts
 };
