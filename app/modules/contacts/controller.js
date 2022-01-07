@@ -48,21 +48,23 @@ const getContact = async(req, res) => {
 const updateContact = async(req, res) => {
     let data = req.body;
     let dataArray = data['userIds'];
+
     try {
         const contact = await Contact.findById(req.params.id);          
         if (contact) {
-            if (dataArray != undefined || dataArray !== null ) {
+            if (dataArray != undefined && dataArray != null ) {
                 for (let i = 0; i < contact.userIds.length; i++) {
                     const dbData = mongoose.Types.ObjectId(contact.userIds[i]).toString();
                     for (let d = 0; d < dataArray.length; d++) {
                         const clientData = dataArray[d];
-                        if (dbData == clientData) {
+                        if (dbData == clientData || clientData == null) {
                             dataArray.splice(d, 1);
                         }
                     }
                 }
             }
-            let dataId = contact.userIds.concat(dataArray);  
+            let dataId = contact.userIds.concat(dataArray);
+            console.log(dataId);  
             const updateContact = await Contact.findByIdAndUpdate(req.params.id,{userIds: dataId}, { new: true });
             res.status(200).json(updateContact);
         } else {
