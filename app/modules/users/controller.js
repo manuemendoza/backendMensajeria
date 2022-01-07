@@ -133,6 +133,7 @@ const deleteUser = async(req, res) => {
 
 module.exports = {
     createUser,
+    loginUser,
     getUsers,
     getUser,
     loginUser,

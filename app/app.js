@@ -3,6 +3,9 @@ const express = require('express');
 
 const database = require('./services/mongoose');
 const userRouter = require('./modules/users/router');
+const contactsRouter = require('./modules/contacts/router');
+const chatRouter = require('./modules/chats/router');
+const messageRouter = require('./modules/messages/router');
 
 database();
 
@@ -17,6 +20,9 @@ app.use(function(req, res, next) {
 
 app.use(express.json());
 app.use('/users', userRouter);
+app.use('/contacts', contactsRouter);
+app.use('/chats', chatRouter);
+app.use('/messages', messageRouter);
 
 // a little easter egg :P
 app.get('/coffee', (req, res) => res.send('So sorry', 418));
