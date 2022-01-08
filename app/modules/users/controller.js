@@ -1,6 +1,7 @@
 const User = require('./model');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
+const mongoose = require('mongoose');
 
 const createUser = async(req, res) => {
     if (!req.body.password) {
@@ -11,6 +12,7 @@ const createUser = async(req, res) => {
         const salt = bcrypt.genSaltSync(9);
         const hash = bcrypt.hashSync(data.password, salt);
         user.password = hash ;
+        user.contacts = [];
         try {
             await user.save();
             res.status(200).json(user);
@@ -25,24 +27,50 @@ const createUser = async(req, res) => {
     }
 };
 
-//Este codigo se ha dejado preparado por si en un futuro se implementa el role de admin
+const createContact = async(req, res) => {
+    const userId = req.params.id; 
+    const contact =req.body.userId;
+    try {
+        const user =  await User.findById(userId);
+        const newContact = await User.findById(contact);
+        if (newContact && user) {
+            let dataContact = newContact._id;
+            let userExists = user.contacts.includes(dataContact);
+            if (!userExists) {
+                user.contacts.push(dataContact);
+                await user.save();
+                res.status(200).json({messege:"contact added"});
+            } else {
+                res.status(400).json({messege:'contact exists'});
+            }
+        } else {
+            res.status(400).json({messege:'user not found'});
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({message: error.message});
+    }
+};
+
+//Esto es para buscar los usurios por el nombre 
 const getUsers = async(req, res) => {
     try {
         if (req.query.name) {
             const users = await User.find({ name: { $regex: new RegExp(req.query.name, 'i') } });
             res.status(200).json({user:users});
         } else {
-            res.status(200).json( await User.find());
+            res.status(200).json(await User.find());
         }
-    } catch (error) {
+    } catch (error) { 
         console.error(error);
         res.status(500).json({message:error.message});
     }
 };
 
+//Esto lo voy a usar cuando busque contactos
 const getUser = async(req, res) => {
     try {
-        const user = await User.findById(req.params.id);
+        const user = await User.findById(req.params.id).populate('contacts');
         if (user) {
             res.status(200).json(user);
         } else {
@@ -68,7 +96,8 @@ const loginUser = async(req, res) => {
                     id: user._id,
                     name: user.name, 
                     surname: user.surname,
-                    email: user.email
+                    email: user.email,
+                    contacts: user.contacts
                 };
                 if (validated) {
                     const token = jwt.sign({
@@ -94,13 +123,11 @@ const updateUser = async(req, res) => {
         const user = await User.findById(req.params.id);
         if (user) {
             let data = req.body;
-
             if (req.body.password) {
                 const salt = bcrypt.genSaltSync(15);
                 const hash = bcrypt.hashSync(req.body.password, salt);
                 data.password = hash;
             };
-
             const userUpdate = await User.findByIdAndUpdate(req.params.id, data, { new: true });
             res.status(200).json(userUpdate);
         } else {
@@ -131,12 +158,41 @@ const deleteUser = async(req, res) => {
     }
 };
 
+const deleteContact = async(req, res) => {
+    const userId = req.params.id; 
+    const contact =req.params.contactId;
+    try {
+        const user =  await User.findById(userId);
+        const newContact = await User.findById(contact);
+        if (newContact && user) {
+            console.log('usuario ', user.contacts);
+            console.log('el nuevo usuario ', newContact._id);
+            let dataContact = newContact._id;
+            let userIndex = user.contacts.indexOf(dataContact);
+            if (userIndex >= 0) {
+                user.contacts.splice(userIndex, 1);
+                await user.save();
+                res.status(200).json({messege:"contact delete"});
+            } else {
+                res.status(400).json({messege:'contact not exists'});
+            }
+        } else {
+            res.status(400).json({messege:'user not found'});
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({message: error.message});
+    }
+};
+
 module.exports = {
     createUser,
+    createContact,
     loginUser,
     getUsers,
     getUser,
     loginUser,
     updateUser,
-    deleteUser
+    deleteUser,
+    deleteContact
 };
