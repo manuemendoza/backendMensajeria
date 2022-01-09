@@ -8,4 +8,4 @@ router.put('/:id', controller.updateChat);
 router.delete('/:id', controller.deleteChat);
 
 
-module.exports = router
+module.exports = router;
