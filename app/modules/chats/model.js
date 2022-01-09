@@ -11,7 +11,8 @@ const ChatsSchema = mongoose.Schema({
     },
     userIds: [{
         type: mongoose.Schema.Types.ObjectId,
-        require: true
+        require: true,
+        ref:"User"
     }]
 }, {
     timestamps: true

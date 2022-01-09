@@ -15,7 +15,15 @@ const createUser = async(req, res) => {
         user.contacts = [];
         try {
             await user.save();
-            res.status(200).json(user);
+            const userData ={
+                id: user._id,
+                name: user.name, 
+                surname: user.surname,
+                username: user.username,
+                email: user.email,
+                contacts: user.contacts
+            };
+            res.status(200).json(userData);
         } catch (error) {
             console.error(error);
             if (error._message == 'User validation failed' || error.code == 11000) {
@@ -70,7 +78,11 @@ const getUsers = async(req, res) => {
 //Esto lo voy a usar cuando busque contactos
 const getUser = async(req, res) => {
     try {
-        const user = await User.findById(req.params.id).populate('contacts');
+        const user = await User.findById(req.params.id).populate('contacts',{
+            name: 1,
+            surname: 1,
+            email: 1
+        });
         if (user) {
             res.status(200).json(user);
         } else {
@@ -96,6 +108,7 @@ const loginUser = async(req, res) => {
                     id: user._id,
                     name: user.name, 
                     surname: user.surname,
+                    username: user.username,
                     email: user.email,
                     contacts: user.contacts
                 };
