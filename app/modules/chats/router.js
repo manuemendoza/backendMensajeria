@@ -2,6 +2,7 @@ const router = require('express').Router();
 const controller = require('./controller')
 
 router.get('/:id', controller.getChat);
+router.get('/user', controller.getUserChats);
 router.get('/', controller.getChats);
 router.post('/', controller.createChats);
 router.put('/:id', controller.updateChat);

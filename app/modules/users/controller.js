@@ -5,7 +5,7 @@ const mongoose = require('mongoose');
 
 const createUser = async(req, res) => {
     if (!req.body.password) {
-        res.status(400).json({messege:'password is required'});
+        res.status(400).json({message:'password is required'});
     } else {
         let data = req.body;
         const user = new User(data);
@@ -47,12 +47,12 @@ const createContact = async(req, res) => {
             if (!userExists) {
                 user.contacts.push(dataContact);
                 await user.save();
-                res.status(200).json({messege:"contact added"});
+                res.status(200).json({message:"contact added"});
             } else {
-                res.status(400).json({messege:'contact exists'});
+                res.status(400).json({message:'contact exists'});
             }
         } else {
-            res.status(400).json({messege:'user not found'});
+            res.status(400).json({message:'user not found'});
         }
     } catch (error) {
         console.error(error);
@@ -61,14 +61,15 @@ const createContact = async(req, res) => {
 };
 
 //Esto es para buscar los usurios por el nombre 
-const getUsers = async(req, res) => {
+const getFoundUsers = async(req, res) => {
     try {
-        if (req.query.name) {
-            const users = await User.find({ name: { $regex: new RegExp(req.query.name, 'i') } });
-            res.status(200).json({user:users});
-        } else {
-            res.status(200).json(await User.find());
-        }
+        const users = await User.find({email: req.query.email}).select({
+            'name': 1,
+            'surname': 1,
+            'username': 1,
+            'email': 1
+        });
+        res.status(200).json(users); 
     } catch (error) { 
         console.error(error);
         res.status(500).json({message:error.message});
@@ -81,6 +82,7 @@ const getUser = async(req, res) => {
         const user = await User.findById(req.params.id).populate('contacts',{
             name: 1,
             surname: 1,
+            username: 1,
             email: 1
         });
         if (user) {
@@ -185,12 +187,12 @@ const deleteContact = async(req, res) => {
             if (userIndex >= 0) {
                 user.contacts.splice(userIndex, 1);
                 await user.save();
-                res.status(200).json({messege:"contact delete"});
+                res.status(200).json({message:"contact delete"});
             } else {
-                res.status(400).json({messege:'contact not exists'});
+                res.status(400).json({message:'contact not exists'});
             }
         } else {
-            res.status(400).json({messege:'user not found'});
+            res.status(400).json({message:'user not found'});
         }
     } catch (error) {
         console.error(error);
@@ -202,7 +204,7 @@ module.exports = {
     createUser,
     createContact,
     loginUser,
-    getUsers,
+    getFoundUsers,
     getUser,
     loginUser,
     updateUser,

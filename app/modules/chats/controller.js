@@ -30,6 +30,17 @@ const getChats = async(req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+const getUserChats = async(req, res) => {
+    try {
+        if (req.query.title) {
+            const title = await Chat.find({ adminId: req.query.id });
+            res.status(200).json({ title: title });
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: error.message });
+    }
+};
 
 const getChat = async(req, res) => {
     try {
@@ -84,6 +95,7 @@ module.exports = {
     createChats,
     getChat,
     getChats,
+    getUserChats,
     updateChat,
     deleteChat
 };
