@@ -1,12 +1,12 @@
 const router = require('express').Router();
-const controller = require('./controller')
+const controller = require('./controller');
+const auth = require('../../services/auth')
 
-router.get('/:id', controller.getChat);
-router.get('/user', controller.getUserChats);
-router.get('/', controller.getChats);
-router.post('/', controller.createChats);
-router.put('/:id', controller.updateChat);
-router.delete('/:id', controller.deleteChat);
+router.get('/:id', auth.checkUser, controller.getChat);
+router.get('/', auth.checkUser, controller.getUserChats);
+router.post('/',auth.checkUser, controller.createChats);
+router.put('/:id',auth.checkUser, controller.updateChat);
+router.delete('/:id',auth.checkUser, controller.deleteChat);
 
 
 module.exports = router;

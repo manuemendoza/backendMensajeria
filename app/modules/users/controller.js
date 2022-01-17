@@ -60,7 +60,7 @@ const createContact = async(req, res) => {
     }
 };
 
-//Esto es para buscar los usurios por el nombre 
+
 const getFoundUsers = async(req, res) => {
     try {
         const users = await User.find({email: req.query.email}).select({
@@ -76,7 +76,21 @@ const getFoundUsers = async(req, res) => {
     }
 };
 
-//Esto lo voy a usar cuando busque contactos
+//Este codigo se ha dejado preparado por si en un futuro se implementa el role de admin
+const getUsers = async(req, res) => {
+    try {
+        if (req.query.name) {
+            const users = await User.find({ name: { $regex: new RegExp(req.query.name, 'i') } });
+            res.status(200).json({user:users});
+        } else {
+            res.status(200).json( await User.find());
+        }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({message:error.message});
+    }
+};
+
 const getUser = async(req, res) => {
     try {
         const user = await User.findById(req.params.id).populate('contacts',{
