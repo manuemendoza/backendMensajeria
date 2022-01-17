@@ -1,4 +1,5 @@
 const Chat = require('./model');
+const mongoose = require('mongoose');
 
 const createChats = async(req, res) => {
     const chatData = req.body;
@@ -15,33 +16,6 @@ const createChats = async(req, res) => {
     }
 };
 
-//Este codigo se ha dejado preparado por si en un futuro se implementa el role de admin
-const getChats = async(req, res) => {
-    try {
-        if (req.query.title) {
-            const title = await Chat.find({ title: { $regex: new RegExp(req.query.title, 'i') } });
-            res.status(200).json({ title: title });
-        } else {
-            const titles = await Chat.find();
-            res.status(200).json(titles);
-        }
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: error.message });
-    }
-};
-const getUserChats = async(req, res) => {
-    try {
-        if (req.query.title) {
-            const title = await Chat.find({ adminId: req.query.id });
-            res.status(200).json({ title: title });
-        }
-    } catch (error) {
-        console.error(error);
-        res.status(500).json({ message: error.message });
-    }
-};
-
 const getChat = async(req, res) => {
     try {
         const chat = await Chat.findById(req.params.id);
@@ -50,6 +24,35 @@ const getChat = async(req, res) => {
         } else {
             res.status(404).json({ message: 'chat not found' });
         }
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: error.message });
+    }
+};
+
+const getUserChats = async (req, res) => {
+    //@TODO idea par abilidtar lo que seria los admin
+    // if (req.auth.user.role === 'admin') {
+    //     query = req.auth.user.id;
+    // }
+    
+    console.log('esto es el get', req.auth.user._id);
+    let query = {
+        $or: [
+            { adminId: req.auth.user._id },
+            { userIds: req.auth.user._id }
+        ]
+    };
+
+    // @TODO: aggregate users to allow filtering by contact name
+    if (req.query.search) {
+        query.title = { $regex: new RegExp(req.query.search, 'i') };
+    }
+
+    try {
+        // const chats = await Chat.find({"$and":[{"userIds":req.auth.user._id}]})
+        const chats = await Chat.find(query);
+        res.status(200).json({ chats });
     } catch (error) {
         console.error(error);
         res.status(500).json({ message: error.message });
@@ -94,7 +97,6 @@ const deleteChat = async(req, res) => {
 module.exports = {
     createChats,
     getChat,
-    getChats,
     getUserChats,
     updateChat,
     deleteChat
