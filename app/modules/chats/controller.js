@@ -20,7 +20,7 @@ const createChats = async(req, res) => {
 
 const getChat = async(req, res) => {
     try {
-        const chat = await Chat.findById(req.params.id);
+        const chat = await Chat.findById(req.params.id).populate('userIds');
         if (chat) {
             res.status(200).json(chat);
         } else {
@@ -37,8 +37,7 @@ const getUserChats = async (req, res) => {
     // if (req.auth.user.role === 'admin') {
     //     query = req.auth.user.id;
     // }
-    
-    console.log('esto es el get', req.auth.user._id);
+
     let query = {
         $or: [
             { adminId: req.auth.user._id },
@@ -53,7 +52,7 @@ const getUserChats = async (req, res) => {
 
     try {
         // const chats = await Chat.find({"$and":[{"userIds":req.auth.user._id}]})
-        const chats = await Chat.find(query);
+        const chats = await Chat.find(query).populate('userIds');
         res.status(200).json({ chats });
     } catch (error) {
         console.error(error);
