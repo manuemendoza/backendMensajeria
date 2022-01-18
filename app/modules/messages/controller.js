@@ -4,6 +4,8 @@ const jwt = require('jsonwebtoken');
 
 const createMessage = async(req, res) => {
         let data = req.body;
+        data.userId = req.auth.user._id;
+        console.log('wtf ', req.body);
         const message = new Message(data);
         try {
             await message.save();

@@ -8,5 +8,4 @@ router.post('/',auth.checkUser, controller.createChats);
 router.put('/:id',auth.checkUser, controller.updateChat);
 router.delete('/:id',auth.checkUser, controller.deleteChat);
 
-
 module.exports = router;

@@ -3,8 +3,10 @@ const mongoose = require('mongoose');
 
 const createChats = async(req, res) => {
     const chatData = req.body;
-    const chat = new Chat(chatData);
+    chatData.adminId = req.auth.user._id;
     try {
+        //@TODO VER COMO NO REPETIR EL CHAT
+        const chat = new Chat(chatData);
         await chat.save();
         res.status(200).json(chat)
     } catch (error) {
