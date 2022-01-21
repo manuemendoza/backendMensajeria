@@ -4,7 +4,7 @@ Esto es una API basica para uso personal de una mensajera instantanea en con la 
 
 ## Comenzando 🚀
 
-Para el desarrollo de esta aplicación se utiliza como lenguaje JavaScript y una base de datos MongoDB para una mejor definicón y gestión de la misma y consultar y modificar los datos. En cuanto al sistema de gestión se ha utilizado moongose.
+Para el desarrollo de esta aplicación se utiliza Express y una base de datos MongoDB para una mejor definicón y gestión de la misma y consultar y modificar los datos. En cuanto al sistema de gestión se ha utilizado moongose.
 Con el patrón de MVC en mente se ha procedido a ordenar las carpetas internas en una aplicación principal, que enlaza todos los demás componentes y dividir en tres componentes principares, usuarios (users), mensajes(messages), chat(chats). 
 Ambas contienen su propia carpeta de controller, model y router, para así ajustarse al patrón mencionado.
 Arbol de Archivos
