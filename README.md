@@ -83,10 +83,6 @@ Ejemplo DElETE.
 
 * **Manuel Mendoza** - *Desarrollador*  
 
-## Licencia 📄
-
-Este proyecto está bajo la Licencia (Tu Licencia) - mira el archivo [LICENSE.md](LICENSE.md) para detalles
-
 ## Gratitud 🎁
 
 Queria dar las gracias al equipo de GeeksHups academy por su apoyo para la realización de este proyecto.
