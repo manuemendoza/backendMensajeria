@@ -130,7 +130,7 @@ const loginUser = async(req, res) => {
                 };
                 if (validated) {
                     const token = jwt.sign({
-                        _id: user._id,
+                        id: user._id,
                         role: user.role
                     }, process.env.PRIVATE_KEY, {
                         expiresIn: '24h'
@@ -157,8 +157,16 @@ const updateUser = async(req, res) => {
                 const hash = bcrypt.hashSync(req.body.password, salt);
                 data.password = hash;
             };
-            const userUpdate = await User.findByIdAndUpdate(req.params.id, data, { new: true });
-            res.status(200).json(userUpdate);
+            const userData = await User.findByIdAndUpdate(req.params.id, data, { new: true });
+            const updateData ={
+                id: userData._id,
+                name: userData.name, 
+                surname: userData.surname,
+                username: userData.username,
+                email: userData.email,
+                contacts: userData.contacts
+            };
+            res.status(200).json(updateData);
         } else {
             res.status(404).json({message: 'user not found'});
         }

@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 
 const createChats = async(req, res) => {
     const chatData = req.body;
-    chatData.adminId = req.auth.user._id;
+    chatData.adminId = req.auth.user.id;
     try {
         //@TODO VER COMO NO REPETIR EL CHAT
         const chat = new Chat(chatData);
@@ -40,8 +40,8 @@ const getUserChats = async (req, res) => {
 
     let query = {
         $or: [
-            { adminId: req.auth.user._id },
-            { userIds: req.auth.user._id }
+            { adminId: req.auth.user.id },
+            { userIds: req.auth.user.id }
         ]
     };
 

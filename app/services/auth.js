@@ -15,7 +15,7 @@ const checkToken = (req, res, next, requiredRole) => {
             let userToken = jwt.verify(token, process.env.PRIVATE_KEY);
             if ( requiredRole == 'user' ||
                 userToken.role == 'admin' ||
-                (req.path.startsWith('/users') && req.params.id == userToken._id) // perfil del propio usuario autenticado
+                (req.path.startsWith('/users') && req.params.id == userToken.id) // perfil del propio usuario autenticado
             ) {
                 req.auth ={
                     user: userToken,

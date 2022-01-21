@@ -4,8 +4,7 @@ const jwt = require('jsonwebtoken');
 
 const createMessage = async(req, res) => {
         let data = req.body;
-        data.userId = req.auth.user._id;
-        console.log('wtf ', req.body);
+        data.userId = req.auth.user.id;
         const message = new Message(data);
         try {
             await message.save();
@@ -20,7 +19,7 @@ const createMessage = async(req, res) => {
 };
 
 //Este codigo se ha dejado preparado por si en un futuro se implementa el role de admin
-const getMessages = async(req, res) => {
+const getFoundMessage = async(req, res) => {
     try {
         if (req.query.message) {
             const message = await Message.find({ message: { $regex: new RegExp(req.query.message, 'i') } });
@@ -33,6 +32,28 @@ const getMessages = async(req, res) => {
         res.status(500).json({message: error.message});
     }
 };
+
+const getMessages = async (req, res) => {
+    let query = {};
+    if (req.query.chatId) {
+        query.chatId = req.query.chatId;
+    }
+    if (req.query.search) {
+        query.text = { $regex: new RegExp(req.query.search, 'i') };
+    }
+    try {
+        let messages;
+        if (req.query.chatId) {
+            messages = await Message.find(query).populate('userId');
+        } else {
+            messages = await Message.find(query).populate('userId').populate('chatId');
+        }
+        res.status(200).json(messages);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({message: error.message});
+    }
+}
 
 const getMessage = async(req, res) => {
     try {
