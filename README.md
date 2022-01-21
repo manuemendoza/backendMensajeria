@@ -78,9 +78,6 @@ Ejemplo Put.
 Ejemplo POST.
 Ejemplo DElETE.
 
-## Despliegue 📦
-
-_Agrega notas adicionales sobre como hacer deploy_
 
 ## Autores ✒️
 
